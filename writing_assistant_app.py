@@ -17,129 +17,136 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for better styling
+# Custom CSS for clean, minimal styling
 st.markdown("""
 <style>
-    /* Main container padding */
+    /* Main container */
     .main .block-container {
         padding: 2rem 3rem;
-        max-width: 1200px;
+        max-width: 900px;
     }
 
-    /* Card styling */
-    .stExpander {
-        background-color: #f8f9fa;
-        border-radius: 12px;
-        border: 1px solid #e9ecef;
-        margin-bottom: 1rem;
-    }
-
-    /* Metric styling */
+    /* Clean metric styling - white text */
     [data-testid="stMetricValue"] {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #1a73e8;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: white !important;
     }
 
-    /* Text area styling */
+    [data-testid="stMetricLabel"] {
+        color: white !important;
+    }
+
+    /* Text area */
     .stTextArea textarea {
-        border-radius: 12px;
-        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        border: 1px solid #cbd5e0;
         font-size: 1rem;
-        line-height: 1.6;
+        line-height: 1.7;
+        background: #fff;
+        color: #1a202c;
     }
 
     .stTextArea textarea:focus {
-        border-color: #1a73e8;
-        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        border-color: #4a5568;
+        box-shadow: none;
     }
 
-    /* Button styling */
+    /* Simple button */
     .stButton > button {
-        border-radius: 12px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        font-size: 1.1rem;
-        transition: all 0.2s ease;
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+        background: #2d3748;
+        border: none;
     }
 
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    /* Section headers */
+    /* Section headers - white text */
     .section-header {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #202124;
-        margin: 2rem 0 1rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white !important;
+        margin: 1.5rem 0 1rem 0;
         padding-bottom: 0.5rem;
-        border-bottom: 3px solid #1a73e8;
+        border-bottom: 2px solid #4a5568;
     }
 
     /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
 
-    /* Divider styling */
-    hr {
-        margin: 2rem 0;
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, #e0e0e0, transparent);
-    }
-
-    /* Issue card */
+    /* Issue card - clean and simple */
     .issue-card {
-        background: white;
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin: 1.5rem 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border: 1px solid #e8eaed;
+        background: #f7fafc;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0;
+        border: 1px solid #e2e8f0;
     }
 
     .category-badge {
-        background: #e8f0fe;
-        color: #1a73e8;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
+        background: #edf2f7;
+        color: #4a5568;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
         display: inline-block;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
     }
 
     .issue-title {
-        font-weight: 600;
-        color: #202124;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
+        font-weight: 500;
+        color: #1a202c;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
     }
 
+    /* Text boxes with explicit dark text */
     .text-box {
-        padding: 1rem 1.25rem;
-        border-radius: 8px;
+        padding: 1rem;
+        border-radius: 6px;
         font-size: 0.95rem;
         line-height: 1.6;
         margin: 0.5rem 0;
+        color: #1a202c !important;
     }
 
     .original-box {
-        background: #fef7e0;
-        border-left: 4px solid #f9ab00;
+        background: #fffbeb;
+        border-left: 3px solid #d69e2e;
+        color: #744210 !important;
     }
 
     .revised-box {
-        background: #e6f4ea;
-        border-left: 4px solid #34a853;
+        background: #f0fff4;
+        border-left: 3px solid #38a169;
+        color: #22543d !important;
     }
 
     .placeholder-box {
-        background: #f1f3f4;
-        border-left: 4px solid #9aa0a6;
-        color: #5f6368;
+        background: #f7fafc;
+        border-left: 3px solid #a0aec0;
+        color: #4a5568 !important;
+    }
+
+    /* Overall message box */
+    .message-box {
+        background: #2d3748;
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        border: 1px solid #4a5568;
+        margin: 1rem 0;
+    }
+
+    /* AI feedback box */
+    .ai-feedback {
+        background: #fff;
+        border-radius: 8px;
+        padding: 1.25rem;
+        border: 1px solid #e2e8f0;
+        line-height: 1.7;
+        color: #1a202c;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -416,9 +423,9 @@ def analyze_text(text: str) -> dict:
 
 # Header
 st.markdown("""
-<div style="text-align: center; padding: 2rem 0 1rem 0;">
-    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: #202124;">✍️ Writing Assistant</h1>
-    <p style="font-size: 1.1rem; color: #5f6368;">Free AI-powered suggestions to improve your writing</p>
+<div style="text-align: center; padding: 1.5rem 0 1rem 0;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.25rem; color: white; font-weight: 700;">Writing Assistant</h1>
+    <p style="font-size: 1rem; color: #a0aec0;">Improve your writing with AI-powered suggestions</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -535,17 +542,17 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
         # Stats
         st.markdown("")
         st.markdown(
-            f"📝 **{results['stats']['words']}** words · "
-            f"**{results['stats']['sentences']}** sentences · "
-            f"**{results['stats']['avg_length']}** avg words/sentence"
+            f"<p style='color: white;'>📝 <strong>{results['stats']['words']}</strong> words · "
+            f"<strong>{results['stats']['sentences']}</strong> sentences · "
+            f"<strong>{results['stats']['avg_length']}</strong> avg words/sentence</p>",
+            unsafe_allow_html=True
         )
 
         # Overall message
         emoji, message = get_overall_message(results['scores']['overall'])
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 1.25rem 1.5rem; border-radius: 12px; margin: 1.5rem 0;">
-            <p style="color: white; font-size: 1.2rem; margin: 0; font-weight: 500;">
+        <div class="message-box">
+            <p style="color: white; font-size: 1rem; margin: 0;">
                 {emoji} {message}
             </p>
         </div>
@@ -612,9 +619,7 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
 
             if ai_feedback:
                 st.markdown(f"""
-                <div style="background: white; border-radius: 12px; padding: 1.5rem;
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8eaed;
-                            line-height: 1.8; white-space: pre-wrap;">
+                <div class="ai-feedback" style="white-space: pre-wrap;">
 {ai_feedback}
                 </div>
                 """, unsafe_allow_html=True)
@@ -624,15 +629,15 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
         # Footer message
         st.markdown("---")
         st.markdown("""
-        <div style="text-align: center; padding: 1.5rem; color: #5f6368;">
-            <p style="font-size: 1.1rem;">✨ Good writing is rewriting. Keep improving!</p>
-        </div>
+        <p style="text-align: center; color: #718096; font-size: 0.9rem; padding: 1rem 0;">
+            Good writing is rewriting. Keep improving!
+        </p>
         """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #9aa0a6; font-size: 0.9rem;">
-    Writing Assistant · Powered by Google Gemini AI · Free to use
-</div>
+<p style="text-align: center; color: #a0aec0; font-size: 0.85rem;">
+    Writing Assistant · Powered by Google Gemini AI
+</p>
 """, unsafe_allow_html=True)
