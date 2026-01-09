@@ -7,7 +7,7 @@ Free to use with Google Gemini AI.
 import streamlit as st
 import re
 import os
-import google.generativeai as genai
+from google import genai
 
 # Page configuration
 st.set_page_config(
@@ -146,20 +146,55 @@ st.markdown("""
 
 
 # Initialize Gemini
-def get_gemini_model():
-    """Get configured Gemini model."""
-    api_key = os.environ.get("GOOGLE_API_KEY") or st.session_state.get("api_key")
+def get_client():
+    """Get configured Gemini client."""
+    api_key = os.environ.get("GOOGLE_API_KEY") or st.session_state.get("api_key", "")
     if api_key:
-        genai.configure(api_key=api_key)
-        return genai.GenerativeModel('gemini-1.5-flash')
+        try:
+            return genai.Client(api_key=api_key)
+        except Exception as e:
+            st.error(f"API Error: {e}")
+            return None
     return None
 
 
-def get_ai_suggestion(issue_type: str, original: str) -> str:
-    """Get AI-powered suggestion for a specific issue."""
-    model = get_gemini_model()
-    if not model:
-        return None
+def test_api_connection():
+    """Test if API key works."""
+    client = get_client()
+    if client:
+        try:
+            # List models to verify API key works
+            models = list(client.models.list())
+            return len(models) > 0
+        except Exception as e:
+            st.error(f"Test failed: {e}")
+            return False
+    return False
+
+
+def get_available_model(client):
+    """Find an available model for text generation."""
+    try:
+        for model in client.models.list():
+            model_name = model.name if hasattr(model, 'name') else str(model)
+            # Look for gemini models that support generation
+            if 'gemini' in model_name.lower() and 'flash' in model_name.lower():
+                return model_name.replace('models/', '')
+        # Fallback to any gemini model
+        for model in client.models.list():
+            model_name = model.name if hasattr(model, 'name') else str(model)
+            if 'gemini' in model_name.lower():
+                return model_name.replace('models/', '')
+    except:
+        pass
+    return "gemini-1.5-flash-latest"  # Default fallback
+
+
+def get_ai_suggestion(issue_type: str, original: str) -> tuple[str, str]:
+    """Get AI-powered suggestion for a specific issue. Returns (suggestion, error)."""
+    client = get_client()
+    if not client:
+        return None, "No API key configured"
 
     prompts = {
         "passive_voice": f"Rewrite this sentence in active voice. Return ONLY the rewritten sentence:\n\n{original}",
@@ -174,17 +209,24 @@ def get_ai_suggestion(issue_type: str, original: str) -> str:
     prompt = prompts.get(issue_type, prompts["general"])
 
     try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
+        model_name = get_available_model(client)
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt
+        )
+        return response.text.strip(), None
     except Exception as e:
-        return None
+        error_msg = str(e)
+        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
+            return None, "Rate limit - wait 15 seconds"
+        return None, f"AI error: {error_msg[:100]}"
 
 
-def get_full_analysis(text: str) -> str:
-    """Get comprehensive AI analysis of the text."""
-    model = get_gemini_model()
-    if not model:
-        return None
+def get_full_analysis(text: str) -> tuple[str, str]:
+    """Get comprehensive AI analysis. Returns (analysis, error)."""
+    client = get_client()
+    if not client:
+        return None, "No API key configured"
 
     prompt = f"""You are a helpful writing coach. Analyze this text and provide friendly, actionable feedback.
 
@@ -201,10 +243,17 @@ TEXT:
 Provide your feedback in a clear, organized format."""
 
     try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
+        model_name = get_available_model(client)
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt
+        )
+        return response.text.strip(), None
     except Exception as e:
-        return f"Error: {str(e)}"
+        error_msg = str(e)
+        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
+            return None, "Rate limit exceeded. Please wait 15-30 seconds and try again."
+        return None, f"Error: {error_msg}"
 
 
 # Helper functions
@@ -378,16 +427,30 @@ with st.sidebar:
     st.markdown("### ⚙️ Settings")
     st.markdown("---")
 
+    # Initialize session state
+    if "api_key" not in st.session_state:
+        st.session_state.api_key = ""
+
     api_key_input = st.text_input(
         "Google API Key",
+        value=st.session_state.api_key,
         type="password",
         placeholder="AIza...",
         help="Get a free key from Google AI Studio"
     )
 
     if api_key_input:
-        st.session_state["api_key"] = api_key_input
-        st.success("✓ API key saved!")
+        st.session_state.api_key = api_key_input
+        # Test the connection
+        if st.button("Test API Key"):
+            with st.spinner("Testing..."):
+                if test_api_connection():
+                    st.success("✅ API key works!")
+                else:
+                    st.error("❌ Invalid API key")
+
+    if st.session_state.api_key:
+        st.caption("✓ API key saved")
 
     st.markdown("---")
     st.markdown("""
@@ -514,10 +577,11 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
                     st.markdown("**✨ Suggested**")
 
                     suggestion = issue.get('fallback')
+                    ai_error = None
 
                     if use_ai:
                         with st.spinner("AI thinking..."):
-                            ai_suggestion = get_ai_suggestion(issue['type'], issue['original'])
+                            ai_suggestion, ai_error = get_ai_suggestion(issue['type'], issue['original'])
                             if ai_suggestion:
                                 suggestion = ai_suggestion
 
@@ -525,11 +589,12 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
                         st.markdown(f"""
                         <div class="text-box revised-box">{suggestion}</div>
                         """, unsafe_allow_html=True)
+                        if ai_error and use_ai:
+                            st.caption(f"⚠️ {ai_error} (showing fallback)")
                     else:
+                        msg = ai_error if ai_error else "Enable AI suggestions for a personalized rewrite"
                         st.markdown(f"""
-                        <div class="text-box placeholder-box">
-                            Enable AI suggestions for a personalized rewrite
-                        </div>
+                        <div class="text-box placeholder-box">{msg}</div>
                         """, unsafe_allow_html=True)
 
                 st.markdown("")
@@ -543,7 +608,7 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
             st.markdown('<p class="section-header">🤖 AI Writing Coach</p>', unsafe_allow_html=True)
 
             with st.spinner("Getting personalized feedback..."):
-                ai_feedback = get_full_analysis(text)
+                ai_feedback, ai_error = get_full_analysis(text)
 
             if ai_feedback:
                 st.markdown(f"""
@@ -553,6 +618,8 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
 {ai_feedback}
                 </div>
                 """, unsafe_allow_html=True)
+            elif ai_error:
+                st.warning(f"⚠️ {ai_error}")
 
         # Footer message
         st.markdown("---")
