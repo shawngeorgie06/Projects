@@ -17,136 +17,331 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for clean, minimal styling
+# Custom CSS — Editorial / Literary Magazine Aesthetic
 st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-    /* Main container */
+    :root {
+        --ink: #1a1a1a;
+        --ink-light: #3d3529;
+        --parchment: #faf8f4;
+        --parchment-deep: #f3efe8;
+        --warm-gray: #8a8070;
+        --accent-rust: #b85c38;
+        --accent-rust-light: #d4845a;
+        --accent-forest: #4a6741;
+        --accent-forest-light: #e8f0e5;
+        --accent-gold: #c4973b;
+        --accent-gold-light: #fdf6e8;
+        --rule: #d5cfc5;
+        --serif: 'Playfair Display', 'Georgia', serif;
+        --body: 'Source Serif 4', 'Georgia', serif;
+        --mono: 'JetBrains Mono', monospace;
+    }
+
+    /* === Global overrides === */
+    .main {
+        background: var(--parchment) !important;
+    }
     .main .block-container {
-        padding: 2rem 3rem;
-        max-width: 900px;
+        padding: 2.5rem 3rem 4rem 3rem;
+        max-width: 820px;
+    }
+    .stApp {
+        background: var(--parchment) !important;
+    }
+    .stApp > header {
+        background: transparent !important;
     }
 
-    /* Clean metric styling - white text */
+    /* Subtle paper grain overlay */
+    .main::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* === Typography === */
+    h1, h2, h3 {
+        font-family: var(--serif) !important;
+        color: var(--ink) !important;
+    }
+    p, li, label, .stMarkdown, span, div {
+        font-family: var(--body) !important;
+        color: var(--ink-light) !important;
+    }
+
+    /* === Metrics — editorial stat cards === */
     [data-testid="stMetricValue"] {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: white !important;
+        font-family: var(--serif) !important;
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+        color: var(--ink) !important;
+        letter-spacing: -0.02em;
     }
-
     [data-testid="stMetricLabel"] {
-        color: white !important;
+        font-family: var(--mono) !important;
+        font-size: 0.7rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--warm-gray) !important;
+    }
+    [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
+        text-align: center;
     }
 
-    /* Text area */
+    /* === Text area — manuscript feel === */
     .stTextArea textarea {
-        border-radius: 8px;
-        border: 1px solid #cbd5e0;
-        font-size: 1rem;
-        line-height: 1.7;
-        background: #fff;
-        color: #1a202c;
+        border-radius: 2px !important;
+        border: 1px solid var(--rule) !important;
+        font-family: var(--body) !important;
+        font-size: 1.05rem !important;
+        line-height: 1.85 !important;
+        background: #fff !important;
+        color: var(--ink) !important;
+        padding: 1.25rem 1.5rem !important;
+        transition: border-color 0.2s ease;
     }
-
     .stTextArea textarea:focus {
-        border-color: #4a5568;
-        box-shadow: none;
+        border-color: var(--accent-rust) !important;
+        box-shadow: 0 0 0 1px var(--accent-rust-light) !important;
+    }
+    .stTextArea textarea::placeholder {
+        color: var(--warm-gray) !important;
+        font-style: italic !important;
     }
 
-    /* Simple button */
+    /* === Buttons === */
     .stButton > button {
-        border-radius: 6px;
-        padding: 0.6rem 1.5rem;
-        font-weight: 500;
-        background: #2d3748;
-        border: none;
+        border-radius: 2px !important;
+        padding: 0.7rem 2rem !important;
+        font-family: var(--mono) !important;
+        font-size: 0.8rem !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.15em !important;
+        background: var(--ink) !important;
+        color: var(--parchment) !important;
+        border: none !important;
+        transition: all 0.25s ease !important;
+    }
+    .stButton > button:hover {
+        background: var(--accent-rust) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(184, 92, 56, 0.25) !important;
+    }
+    .stButton > button:active {
+        transform: translateY(0px);
     }
 
-    /* Section headers - white text */
+    /* === Section headers — editorial rules === */
     .section-header {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: white !important;
-        margin: 1.5rem 0 1rem 0;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #4a5568;
+        font-family: var(--serif) !important;
+        font-size: 1.4rem !important;
+        font-weight: 600 !important;
+        color: var(--ink) !important;
+        margin: 2.5rem 0 1rem 0;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid var(--ink);
+        letter-spacing: -0.01em;
     }
 
-    /* Hide Streamlit branding */
+    /* === Hide Streamlit chrome === */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    .stDeployButton {display: none;}
 
-    /* Issue card - clean and simple */
+    /* === Issue cards — manuscript note style === */
     .issue-card {
-        background: #f7fafc;
-        border-radius: 8px;
-        padding: 1rem 1.25rem;
-        margin: 1rem 0;
-        border: 1px solid #e2e8f0;
+        background: #fff;
+        border-radius: 0;
+        padding: 1.1rem 1.4rem;
+        margin: 1.2rem 0 0.5rem 0;
+        border: 1px solid var(--rule);
+        border-left: 3px solid var(--accent-rust);
+        position: relative;
+    }
+    .issue-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, var(--accent-rust), transparent);
     }
 
     .category-badge {
-        background: #edf2f7;
-        color: #4a5568;
-        padding: 0.2rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
+        background: transparent;
+        color: var(--accent-rust);
+        padding: 0.15rem 0;
+        border-radius: 0;
+        font-family: var(--mono) !important;
+        font-size: 0.65rem;
         font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
         display: inline-block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
     }
 
     .issue-title {
-        font-weight: 500;
-        color: #1a202c;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
+        font-family: var(--body) !important;
+        font-weight: 600;
+        color: var(--ink) !important;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+        line-height: 1.4;
     }
 
-    /* Text boxes with explicit dark text */
+    /* === Text comparison boxes === */
     .text-box {
-        padding: 1rem;
-        border-radius: 6px;
-        font-size: 0.95rem;
-        line-height: 1.6;
+        padding: 1rem 1.2rem;
+        border-radius: 0;
+        font-family: var(--body) !important;
+        font-size: 0.92rem;
+        line-height: 1.7;
         margin: 0.5rem 0;
-        color: #1a202c !important;
+        color: var(--ink) !important;
     }
 
     .original-box {
-        background: #fffbeb;
-        border-left: 3px solid #d69e2e;
-        color: #744210 !important;
+        background: var(--accent-gold-light);
+        border-left: 3px solid var(--accent-gold);
+        color: var(--ink-light) !important;
     }
 
     .revised-box {
-        background: #f0fff4;
-        border-left: 3px solid #38a169;
-        color: #22543d !important;
+        background: var(--accent-forest-light);
+        border-left: 3px solid var(--accent-forest);
+        color: var(--ink-light) !important;
     }
 
     .placeholder-box {
-        background: #f7fafc;
-        border-left: 3px solid #a0aec0;
-        color: #4a5568 !important;
+        background: var(--parchment-deep);
+        border-left: 3px solid var(--rule);
+        color: var(--warm-gray) !important;
+        font-style: italic;
     }
 
-    /* Overall message box */
+    /* === Overall message box === */
     .message-box {
-        background: #2d3748;
-        padding: 1rem 1.25rem;
-        border-radius: 8px;
-        border: 1px solid #4a5568;
-        margin: 1rem 0;
+        background: #fff;
+        padding: 1.2rem 1.5rem;
+        border-radius: 0;
+        border: 1px solid var(--rule);
+        margin: 1.2rem 0;
+        position: relative;
+    }
+    .message-box p {
+        color: var(--ink) !important;
+        font-family: var(--body) !important;
     }
 
-    /* AI feedback box */
+    /* === AI feedback box === */
     .ai-feedback {
         background: #fff;
-        border-radius: 8px;
-        padding: 1.25rem;
-        border: 1px solid #e2e8f0;
-        line-height: 1.7;
-        color: #1a202c;
+        border-radius: 0;
+        padding: 1.5rem 1.75rem;
+        border: 1px solid var(--rule);
+        line-height: 1.8;
+        color: var(--ink-light) !important;
+        font-family: var(--body) !important;
+        font-size: 0.95rem;
+        position: relative;
+    }
+    .ai-feedback::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(to right, var(--accent-rust), var(--accent-gold), transparent);
+    }
+
+    /* === Sidebar === */
+    [data-testid="stSidebar"] {
+        background: var(--parchment-deep) !important;
+        border-right: 1px solid var(--rule) !important;
+    }
+    [data-testid="stSidebar"] .stMarkdown p,
+    [data-testid="stSidebar"] .stMarkdown li,
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        color: var(--ink-light) !important;
+    }
+
+    /* === Toggle === */
+    .stToggle label span {
+        font-family: var(--body) !important;
+        color: var(--ink-light) !important;
+    }
+
+    /* === Radio buttons === */
+    .stRadio label {
+        font-family: var(--body) !important;
+        color: var(--ink-light) !important;
+    }
+
+    /* === Dividers === */
+    hr {
+        border: none !important;
+        border-top: 1px solid var(--rule) !important;
+        margin: 1.5rem 0 !important;
+    }
+
+    /* === Scrollbar styling === */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--parchment-deep);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--rule);
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--warm-gray);
+    }
+
+    /* === Score cards container === */
+    .score-card {
+        text-align: center;
+        padding: 1rem 0.5rem;
+        border: 1px solid var(--rule);
+        background: #fff;
+        position: relative;
+    }
+    .score-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 2px;
+        background: var(--accent-rust);
+    }
+    .score-val {
+        font-family: var(--serif);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.2;
+    }
+    .score-label {
+        font-family: var(--mono);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--warm-gray);
+        margin-top: 0.3rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -423,15 +618,17 @@ def analyze_text(text: str) -> dict:
 
 # Header
 st.markdown("""
-<div style="text-align: center; padding: 1.5rem 0 1rem 0;">
-    <h1 style="font-size: 2.5rem; margin-bottom: 0.25rem; color: white; font-weight: 700;">Writing Assistant</h1>
-    <p style="font-size: 1rem; color: #a0aec0;">Improve your writing with AI-powered suggestions</p>
+<div style="text-align: center; padding: 3rem 0 1.5rem 0;">
+    <p style="font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: var(--accent-rust); margin-bottom: 0.75rem;">AI-Powered</p>
+    <h1 style="font-family: var(--serif); font-size: 3.2rem; margin-bottom: 0.4rem; color: var(--ink); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;">Writing<br>Assistant</h1>
+    <div style="width: 50px; height: 2px; background: var(--ink); margin: 1rem auto;"></div>
+    <p style="font-family: var(--body); font-size: 1rem; color: var(--warm-gray); font-style: italic;">Refine your prose with intelligent suggestions</p>
 </div>
 """, unsafe_allow_html=True)
 
 # API Key in sidebar
 with st.sidebar:
-    st.markdown("### ⚙️ Settings")
+    st.markdown("### Settings")
     st.markdown("---")
 
     # Initialize session state
@@ -475,29 +672,29 @@ has_api = bool(os.environ.get("GOOGLE_API_KEY") or st.session_state.get("api_key
 st.markdown("---")
 
 # Input section
-st.markdown('<p class="section-header">📄 Enter Your Text</p>', unsafe_allow_html=True)
+st.markdown('<p class="section-header">Your Text</p>', unsafe_allow_html=True)
 
 input_method = st.radio(
     "Choose input:",
-    ["✏️ Paste text", "📁 Upload file"],
+    ["Paste text", "Upload file"],
     horizontal=True,
     label_visibility="collapsed"
 )
 
 text = ""
 
-if "✏️" in input_method:
+if "Paste" in input_method:
     text = st.text_area(
         "Your text",
         height=220,
-        placeholder="Paste or type your text here...\n\nFor best results, enter at least a few sentences.",
+        placeholder="Begin typing or paste your text here...\n\nA few sentences will yield the richest feedback.",
         label_visibility="collapsed"
     )
 else:
     uploaded = st.file_uploader("Upload", type=['txt', 'md'], label_visibility="collapsed")
     if uploaded:
         text = uploaded.read().decode('utf-8')
-        st.info(f"📄 Loaded {len(text.split())} words")
+        st.info(f"Loaded {len(text.split())} words")
 
 # Options row
 st.markdown("")
@@ -505,7 +702,7 @@ col1, col2 = st.columns([1, 3])
 
 with col1:
     use_ai = st.toggle(
-        "🤖 AI Suggestions",
+        "AI Suggestions",
         value=has_api,
         disabled=not has_api,
         help="Enable AI-powered rewrites"
@@ -513,11 +710,11 @@ with col1:
 
 with col2:
     if not has_api:
-        st.caption("💡 Add your free Google API key in the sidebar to enable AI suggestions")
+        st.caption("Add your free Google API key in the sidebar to enable AI suggestions")
 
 # Analyze button
 st.markdown("")
-if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True):
+if st.button("ANALYZE MY WRITING", type="primary", use_container_width=True):
 
     if not text.strip():
         st.warning("Please enter some text to analyze.")
@@ -529,21 +726,28 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
             results = analyze_text(text)
 
         # Scores section
-        st.markdown('<p class="section-header">📊 Scores</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section-header">Assessment</p>', unsafe_allow_html=True)
 
-        cols = st.columns(5)
         score_names = ['Overall', 'Clarity', 'Style', 'Conciseness', 'Tone']
         score_keys = ['overall', 'clarity', 'style', 'conciseness', 'tone']
 
-        for col, name, key in zip(cols, score_names, score_keys):
-            with col:
-                st.metric(name, f"{results['scores'][key]}/10")
+        scores_html = '<div style="display: flex; gap: 0; margin: 1rem 0;">'
+        for name, key in zip(score_names, score_keys):
+            val = results['scores'][key]
+            scores_html += f'''
+            <div class="score-card" style="flex: 1;">
+                <div class="score-val">{val}</div>
+                <div class="score-label">{name}</div>
+            </div>'''
+        scores_html += '</div>'
+        st.markdown(scores_html, unsafe_allow_html=True)
 
         # Stats
         st.markdown("")
         st.markdown(
-            f"<p style='color: white;'>📝 <strong>{results['stats']['words']}</strong> words · "
-            f"<strong>{results['stats']['sentences']}</strong> sentences · "
+            f"<p style='color: var(--warm-gray); font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.05em;'>"
+            f"<strong>{results['stats']['words']}</strong> words &middot; "
+            f"<strong>{results['stats']['sentences']}</strong> sentences &middot; "
             f"<strong>{results['stats']['avg_length']}</strong> avg words/sentence</p>",
             unsafe_allow_html=True
         )
@@ -552,7 +756,7 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
         emoji, message = get_overall_message(results['scores']['overall'])
         st.markdown(f"""
         <div class="message-box">
-            <p style="color: white; font-size: 1rem; margin: 0;">
+            <p style="color: var(--ink); font-size: 1.05rem; margin: 0; font-family: var(--body); font-style: italic;">
                 {emoji} {message}
             </p>
         </div>
@@ -561,8 +765,8 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
         # Suggestions
         if results['issues']:
             st.markdown("---")
-            st.markdown('<p class="section-header">💡 Suggestions</p>', unsafe_allow_html=True)
-            st.markdown(f"Found **{len(results['issues'])}** areas to improve:")
+            st.markdown('<p class="section-header">Suggestions</p>', unsafe_allow_html=True)
+            st.markdown(f"<p style='color: var(--warm-gray); font-style: italic;'>{len(results['issues'])} areas identified for revision</p>", unsafe_allow_html=True)
 
             for i, issue in enumerate(results['issues']):
                 st.markdown(f"""
@@ -575,13 +779,13 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
                 col1, col2 = st.columns(2)
 
                 with col1:
-                    st.markdown("**📝 Original**")
+                    st.markdown("**Original**")
                     st.markdown(f"""
                     <div class="text-box original-box">{issue['original']}</div>
                     """, unsafe_allow_html=True)
 
                 with col2:
-                    st.markdown("**✨ Suggested**")
+                    st.markdown("**Revised**")
 
                     suggestion = issue.get('fallback')
                     ai_error = None
@@ -607,12 +811,12 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
                 st.markdown("")
 
         else:
-            st.success("🎉 Great job! No major issues found.")
+            st.success("Excellent — no major issues found.")
 
         # Full AI Analysis
         if use_ai and has_api:
             st.markdown("---")
-            st.markdown('<p class="section-header">🤖 AI Writing Coach</p>', unsafe_allow_html=True)
+            st.markdown('<p class="section-header">AI Writing Coach</p>', unsafe_allow_html=True)
 
             with st.spinner("Getting personalized feedback..."):
                 ai_feedback, ai_error = get_full_analysis(text)
@@ -629,15 +833,17 @@ if st.button("🔍 Analyze My Writing", type="primary", use_container_width=True
         # Footer message
         st.markdown("---")
         st.markdown("""
-        <p style="text-align: center; color: #718096; font-size: 0.9rem; padding: 1rem 0;">
-            Good writing is rewriting. Keep improving!
+        <p style="text-align: center; color: var(--warm-gray); font-size: 0.95rem; padding: 1rem 0; font-family: var(--body); font-style: italic;">
+            Good writing is rewriting. Keep refining.
         </p>
         """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("---")
 st.markdown("""
-<p style="text-align: center; color: #a0aec0; font-size: 0.85rem;">
-    Writing Assistant · Powered by Google Gemini AI
-</p>
+<div style="text-align: center; padding: 1rem 0 2rem 0;">
+    <p style="font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--warm-gray);">
+        Writing Assistant &middot; Powered by Google Gemini AI
+    </p>
+</div>
 """, unsafe_allow_html=True)
